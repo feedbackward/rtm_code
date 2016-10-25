@@ -1,11 +1,9 @@
 
------------------------------------
 CODE FOR ROBUST TARGET MINIMIZATION
 -----------------------------------
 
 Latest update: October 20, 2016
 
----------
 OVERVIEW:
 ---------
 
@@ -22,127 +20,136 @@ All code files are thoroughly commented, so in this readme we simply summarize w
 Most recent code tests (all examples) were carried out at the time of the most recent update (see top of readme), using R version 3.3.1, and the latest versions of all the required packages. For more detailed system requirements, please consult the documentation of R (https://cran.r-project.org/) and the Rcpp package (http://www.rcpp.org/).
 
 
----------
 CONTENTS:
 ---------
 
-- Two full working examples (mlR_example.R)
+#### Two full working examples (mlR_example.R)
 
 In this file, all elements including the data generation process and execution of both the proposed algorithm and all competing algorithms is captured, and perhaps should be viewed first, before digging into the other files. In addition, all required libraries are specified at the top of this file. The two examples are as follows:
 
- -- Multi-dimensional linear regression using the proposed method, competitive benchmarks, and data generation process used in simulations from the paper.
- -- 1-dimensional linear regression using a simple 5th order polynomial model and light/heavy noise classes.
+- Multi-dimensional linear regression using the proposed method, competitive benchmarks, and data generation process used in simulations from the paper.
+- 1-dimensional linear regression using a simple 5th order polynomial model and light/heavy noise classes.
 
 
-- Experiment data files (exp_df_*.rda)
+#### Experiment data files
 
-Each file includes one data frame, called exp_df, which captures all the experimental settings considered in the paper (see mlR_data.R for detail on contents).
+Each file (of .rda format) includes one data frame, called `exp_df`, which captures all the experimental settings considered in the paper (see mlR_data.R for detail on contents).
 
 
-- Data generation (mlR_data.R)
+#### Data generation (mlR_data.R)
 
 The main contents here are helper functions for generating data from a large number of parametric distributions, and a generic function (data_noise) for actually doing the generation compactly. Details are commented into the code, but the helper functions are of the following forms.
 
- -- ml_m*: expectation of distribution *
- -- ml_v*: variance of distribution *
- -- ml_s*: skewness of *
- -- ml_p*: probability distribution function of *
- -- ml_d*: probability density function of *
- -- ml_r*: randomly generate observations from distribution *
+- `ml_m*`: expectation of distribution `*`
+- `ml_v*`: variance of distribution `*`
+- `ml_s*`: skewness of `*`
+- `ml_p*`: probability distribution function of `*`
+- `ml_d*`: probability density function of `*`
+- `ml_r*`: randomly generate observations from distribution `*`
 
-The univariate distributions included are
+The univariate distributions included are:
 
- -- Arcsine (asin), Beta Prime (bpri), Chi-squared (chisq), Exponential (exp), Exponential-logarithmic (explog), F (f), Folded Normal (fnorm), Frechet (frec), Gamma (gamma), Gaussian mixture (gmm), Gompertz (gomp), Gumbel (gum), Hyperbolic secant (hsec), Laplace (lap), Levy (levy), log-Logistic (llog), log-Normal (lnorm), Logistic (lgst), Maxwell (maxw), Pareto (pareto), Rayleigh (rayl), Semicircle (scir), Student-t (t), Triangle (tri), Uniform (unif), U-Power (upwr), Wald (wald), Weibull (weibull).
+Arcsine (`asin`), Beta Prime (`bpri`), Chi-squared (`chisq`), Exponential (`exp`), Exponential-logarithmic (`explog`), F (`f`), Folded Normal (`fnorm`), Frechet (`frec`), Gamma (`gamma`), Gaussian mixture (`gmm`), Gompertz (`gomp`), Gumbel (`gum`), Hyperbolic secant (`hsec`), Laplace (`lap`), Levy (`levy`), log-Logistic (`llog`), log-Normal (`lnorm`), Logistic (`lgst`), Maxwell (`maxw`), Pareto (`pareto`), Rayleigh (`rayl`), Semicircle (`scir`), Student-t (`t`), Triangle (`tri`), Uniform (`unif`), U-Power (`upwr`), Wald (`wald`), Weibull (`weibull`).
 
 Note that the Normal distribution is covered by the R stats package. Typically, if a function is available in R stats, we do not include it here, for example the density function of the Chi-squared distribution, and so forth.
 
 Of these distributions, generating simulations from a collection of variations (precisely the ones used in the tests in the paper) is easily carried out with the above-mentioned data_noise function. Parameter settings and the like can be confirmed swiftly by looking at the innards of this routine.
 
 
-- Functions for generating M-estimators of location (rho in the paper; see mlR_fn.R and mlC_loc.cpp)
+#### Functions for generating M-estimators of location (rho in the paper; see mlR_fn.R and mlC_loc.cpp)
 
 In the R code, rho, psi (first derivative), eta (second derivative), and re-weighting term psi(u)/u, are included for the all of the following functions.
 
- -- Widest and narrowest members of the Catoni class (catwide and catnar)
- -- Quadratic function (l2) and absolute value function (l1)
- -- log(cosh()) (lcosh)
- -- Square root algebraic function (algsq)
- -- "Fair" function (fair)
- -- Huber function (huber)
- -- Modified Huber function (hmod)
- -- Gudermannian function (gud)
- -- Logistic function (lgst)
- -- Arctangent (atan)
+- Widest and narrowest members of the Catoni class (`catwide` and `catnar`)
+- Quadratic function (`l2`) and absolute value function (`l1`)
+- log(cosh()) (`lcosh`)
+- Square root algebraic function (`algsq`)
+- "Fair" function (`fair`)
+- Huber function (`huber`)
+- Modified Huber function (`hmod`)
+- Gudermannian function (`gud`)
+- Logistic function (`lgst`)
+- Arctangent (`atan`)
 
-The terms in parentheses (*) above are the names used in the R and C++ code.
+The terms in parentheses (`*`) above are the names used in the R and C++ code.
 The four key types of functions mentioned above take the form
 
- -- ml_rho.*, ml_psi.*, ml_eta.*, ml_wt.*
+```
+ml_rho.*, ml_psi.*, ml_eta.*, ml_wt.*
+```
 
-where * is filled in by any of the names in parentheses.
+where `*` is filled in by any of the names in parentheses.
 
 In the C++ code (mlC_loc.cpp), we have just the psi functions, named
 
- -- psi_*_n
+```
+psi_*_n
+```
 
 in the same way, for catnar, catwide, lcosh, gud, and lgst only.
 
 
-- Iterative routines for computing location estimates (mlR_loc.R and mlC_loc.cpp)
+#### Iterative routines for computing location estimates (mlR_loc.R and mlC_loc.cpp)
 
 In the R code we have two variants of a typical fixed-point update,
 
- -- ml_loc.s and ml_loc.nos
+```
+ml_loc.s and ml_loc.nos
+```
 
-which work fine given any ml_psi.* function.
+which work fine given any `ml_psi.*` function.
 
-In the C++ code, we have implemented the equivalent of ml_loc.s, for all the estimators considered, of the form
+In the C++ code, we have implemented the equivalent of `ml_loc.s`, for all the estimators considered, of the form
 
- -- est_*
+```
+est_*
+```
 
-where * is any of the psi functions implemented.
+where `*` is any of the psi functions implemented.
 
 
-- Functions for generating M-estimators of scale (chi in the paper; see mlR_fn.R and mlC_scale.cpp)
+#### Functions for generating M-estimators of scale (chi in the paper; see mlR_fn.R and mlC_scale.cpp)
 In the R code we have included numerous choices of chi, as below.
 
- -- Tukey's bisquare function (tukey)
- -- x^{1+c} for c in [0,1] (lp)
- -- psi^2, assuming sigmoidal psi (quad)
- -- log(1+psi^2), again assuming sigmoidal psi (lquad)
- -- Standard form from Huber given convex rho and psi (huber)
- -- MAD (median absolute deviation) about zero (madzero)
+- Tukey's bisquare function (`tukey`)
+- x^{1+c} for c in [0,1] (`lp`)
+- psi^2, assuming sigmoidal psi (`quad`)
+- log(1+psi^2), again assuming sigmoidal psi (`lquad`)
+- Standard form from Huber given convex rho and psi (`huber`)
+- MAD (median absolute deviation) about zero (`madzero`)
 
-All of these come in the general form ml_chi.*, where * is replaced with any of the names in parentheses.
+All of these come in the general form `ml_chi.*`, where `*` is replaced with any of the names in parentheses.
 
 In the C++ code (mlC_scale.cpp), we have chi for Huber's proposal 2, called chi_huber2_n.
 
 
-- Iterative routines for computing scale estimates (mlR_scale.R and mlC_scale.cpp)
+#### Iterative routines for computing scale estimates (mlR_scale.R and mlC_scale.cpp)
 
 There are three prototypes of iterative updates in the R code, called
 
- -- ml_s.*
+```
+ml_s.*
+```
 
 where * is A, B, or C. Note that the first two correspond to the updates considered in the Appendix of the paper. These functions work with any chi function of the form ml_chi.* discussed directly above.
 
 In the C++ code, we have
-
- -- scale_huber2,
+```
+scale_huber2,
+ ```
 
 which is the equivalent of ml_s.A applied to the Huber proposal 2 setting.
 
 
-- Code for the proposed routine, captured in Algorithms 1 and 2 in the paper (mlR_rtn.R)
+#### Code for the proposed routine, captured in Algorithms 1 and 2 in the paper (mlR_rtn.R)
 
 
-- Code for the competitive benchmarks considered in the paper (mlR_competitors.R)
+#### Code for the competitive benchmarks considered in the paper (mlR_competitors.R)
 
 
-** Note: loading mlR_all.RData, mlR_data.RData, and all the required libraries is sufficient to run everything. **
+*Note: loading mlR_all.RData, mlR_data.RData, and all the required libraries is sufficient to run everything.
 
 
--------------------
 REFERENCES IN CODE:
 -------------------
 
