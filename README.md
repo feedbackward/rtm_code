@@ -23,6 +23,11 @@ Most recent code tests (all examples) were carried out at the time of the most r
 CONTENTS:
 ---------
 
+#### Real data used in empirical tests (files d0*.txt).
+
+These are well-known data sets archived by J. Burkardt at http://people.sc.fsu.edu/~jburkardt/. All descriptions are unmodified.
+
+
 #### Two full working examples (mlR_example.R)
 
 In this file, all elements including the data generation process and execution of both the proposed algorithm and all competing algorithms is captured, and perhaps should be viewed first, before digging into the other files. In addition, all required libraries are specified at the top of this file. The two examples are as follows:
