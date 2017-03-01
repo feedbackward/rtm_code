@@ -2,7 +2,7 @@
 CODE FOR ROBUST TARGET MINIMIZATION
 -----------------------------------
 
-Latest update: October 20, 2016
+Latest update: March 1, 2017
 
 OVERVIEW:
 ---------
